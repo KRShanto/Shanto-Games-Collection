@@ -1,0 +1,86 @@
+.form {
+  width: 45rem;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  margin: 2rem auto;
+  background-color: rgb(19, 19, 19);
+  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.136);
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-family: "Tilt Neon", cursive;
+    color: rgb(204, 2, 110);
+
+    .icon {
+      font-size: 3rem;
+      margin-right: 1rem;
+      //   border: 2px solid blue;
+      color: rgb(190, 0, 168);
+    }
+  }
+
+  .form-wrapper {
+    margin: 2rem 0;
+  }
+
+  .label-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .error {
+    font-size: 1.8rem;
+    font-family: "Josefin Sans", sans-serif;
+    color: rgb(248, 210, 0);
+    // font-weight: bold;
+    text-align: center;
+    background-color: black;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  label {
+    font-size: 2rem;
+    font-family: "Tilt Neon", cursive;
+    color: rgb(202, 2, 52);
+    font-weight: bold;
+  }
+
+  input {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    outline: none;
+    font-size: 1.8rem;
+    font-family: "Tilt Neon", cursive;
+    color: rgba(255, 255, 255, 0.681);
+    background-color: rgb(19, 19, 19);
+    border: 0.2rem solid rgb(202, 2, 52);
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.2rem solid rgb(202, 2, 52);
+    outline: none;
+    font-size: 2rem;
+    font-family: "Josefin Sans", sans-serif;
+    color: rgba(255, 255, 255, 0.91);
+    font-weight: bold;
+    background-color: rgb(202, 2, 52);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: transparent;
+      color: rgb(202, 2, 52);
+      border: 0.2rem solid rgb(202, 2, 52);
+    }
+  }
+}

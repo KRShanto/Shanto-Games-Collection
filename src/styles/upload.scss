@@ -1,0 +1,19 @@
+.upload-form {
+  .drag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    border: 0.2rem dashed rgb(202, 2, 52);
+    // background-color: rgb(19, 19, 19);
+    color: rgba(255, 255, 255, 0.681);
+    font-size: 2rem;
+    font-family: "Tilt Neon", cursive;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+  }
+}

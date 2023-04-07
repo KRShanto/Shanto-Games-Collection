@@ -4,17 +4,21 @@ import { storage, db } from "../configs/firebase";
 import { ref, uploadBytesResumable } from "firebase/storage";
 import { query, where, getDocs, collection, addDoc } from "firebase/firestore";
 import slugify from "slugify";
+import { PopupType } from "../types/popup";
+import { FiUploadCloud } from "react-icons/fi";
 
 // A component that allows the user to upload a file to Firebase Storage.
 export default function Upload({
   setSuccess,
+  setPopup,
 }: {
   setSuccess: React.Dispatch<React.SetStateAction<string | null>>;
+  setPopup: React.Dispatch<React.SetStateAction<PopupType>>;
 }) {
   const [gameName, setGameName] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>();
 
   const onDrop = (acceptedFiles: File[]) => {
     // Check if the file ends with .apk or not
@@ -69,37 +73,47 @@ export default function Upload({
         setError(error.message);
       },
       () => {
+        // successfull upload
         setSuccess("File uploaded successfully");
         setProgress(0);
         setFile(null);
+        setGameName("");
+        setPopup(null);
       }
     );
   };
 
   return (
-    <div className="upload-form popup">
-      <h1 className="title">Upload Game</h1>
+    <div className="upload-form popup form">
+      <h1 className="title">
+        <FiUploadCloud className="icon" />
+        Upload Game
+      </h1>
 
       {error && <p className="error">{error}</p>}
 
-      <label htmlFor="game-name">Game Name</label>
-      <input
-        type="text"
-        id="game-name"
-        value={gameName}
-        onChange={(e) => setGameName(e.target.value)}
-      />
+      <div className="form-wrapper label-input">
+        <label htmlFor="game-name">Game Name</label>
+        <input
+          type="text"
+          id="game-name"
+          value={gameName}
+          onChange={(e) => setGameName(e.target.value)}
+        />
+      </div>
 
-      <Dragzone onDrop={onDrop}>
-        {({ getRootProps, getInputProps }) => (
-          <div {...getRootProps()}>
-            <input {...getInputProps()} />
-            <p className="text">
-              Drag your game file here or click here to select a file
-            </p>
-          </div>
-        )}
-      </Dragzone>
+      <div className="form-wrapper drag">
+        <Dragzone onDrop={onDrop}>
+          {({ getRootProps, getInputProps }) => (
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              <p className="text">
+                Drag your game file here or click here to select a file
+              </p>
+            </div>
+          )}
+        </Dragzone>
+      </div>
 
       {file && (
         <div className="file-info">
@@ -125,7 +139,9 @@ export default function Upload({
         </div>
       )}
 
-      <button onClick={uploadFile}>Upload</button>
+      <button onClick={uploadFile} type="submit">
+        Upload
+      </button>
     </div>
   );
 }
