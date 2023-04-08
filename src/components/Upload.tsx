@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import Dragzone from "react-dropzone";
 import { storage, db } from "../configs/firebase";
-import { ref, uploadBytesResumable } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { query, where, getDocs, collection, addDoc } from "firebase/firestore";
 import slugify from "slugify";
 import { PopupType } from "../types/popup";
 import { FiUploadCloud } from "react-icons/fi";
+import { GameType } from "../types/game";
 
 // A component that allows the user to upload a file to Firebase Storage.
 export default function Upload({
-  setSuccess,
   setPopup,
+  setGames,
 }: {
-  setSuccess: React.Dispatch<React.SetStateAction<string | null>>;
   setPopup: React.Dispatch<React.SetStateAction<PopupType>>;
+  setGames: React.Dispatch<React.SetStateAction<GameType[]>>;
 }) {
   const [gameName, setGameName] = useState<string>("");
+  const [pasword, setPassword] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string>();
@@ -40,6 +42,18 @@ export default function Upload({
       return;
     }
 
+    if (pasword === "") {
+      setError("Please enter a password");
+      return;
+    } else {
+      const actualPassword = process.env.REACT_APP_PASSWORD;
+
+      if (actualPassword !== pasword) {
+        setError("Wrong password");
+        return;
+      }
+    }
+
     const slug = slugify(gameName, {
       replacement: "-",
       strict: true,
@@ -54,7 +68,7 @@ export default function Upload({
       return;
     }
 
-    await addDoc(collection(db, "games"), {
+    const newGame = await addDoc(collection(db, "games"), {
       name: gameName,
       slug: slug,
     });
@@ -72,13 +86,24 @@ export default function Upload({
       (error) => {
         setError(error.message);
       },
-      () => {
+      async () => {
         // successfull upload
-        setSuccess("File uploaded successfully");
         setProgress(0);
         setFile(null);
         setGameName("");
         setPopup(null);
+
+        // update games list
+        const newGameData = {
+          id: newGame.id,
+          name: gameName,
+          slug: slug,
+          downloadUrl: await getDownloadURL(storageRef),
+        };
+
+        setGames((prev) => {
+          return [...prev, newGameData];
+        });
       }
     );
   };
@@ -102,6 +127,16 @@ export default function Upload({
         />
       </div>
 
+      <div className="form-wrapper label-input">
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          value={pasword}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+
       <div className="form-wrapper drag">
         <Dragzone onDrop={onDrop}>
           {({ getRootProps, getInputProps }) => (
@@ -117,11 +152,15 @@ export default function Upload({
 
       {file && (
         <div className="file-info">
-          <p>File name: {file.name}</p>
-          <p>
-            File size:
-            {Math.round((file.size / 1024 / 1024) * 100) / 100}
-            MB
+          <p className="name">
+            File name: <span className="data">{file.name}</span>
+          </p>
+          <p className="size">
+            File size:{" "}
+            <span className="data">
+              {Math.round((file.size / 1024 / 1024) * 100) / 100}
+              MB
+            </span>
           </p>
         </div>
       )}
@@ -130,17 +169,16 @@ export default function Upload({
         <div className="progress">
           <p className="perc">{Math.round(progress)}%</p>
 
-          <div className="bar">
-            <div
-              className="progress-bar"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
+          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
         </div>
       )}
 
-      <button onClick={uploadFile} type="submit">
+      <button onClick={uploadFile} type="submit" className="btn">
         Upload
+      </button>
+
+      <button className="btn" onClick={() => setPopup(null)} type="button">
+        Cancel
       </button>
     </div>
   );

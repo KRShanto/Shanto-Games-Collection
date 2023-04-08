@@ -1,6 +1,1 @@
-export type PopupType =
-  | "UpdateForm"
-  | "UploadForm"
-  | "DeleteForm"
-  | "LoginForm"
-  | null;
+export type PopupType = "UpdateForm" | "UploadForm" | "DeleteForm" | null;
